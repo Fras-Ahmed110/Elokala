@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Elokala | SHOP</title>
+    <style>
+        /* ===== Reset & Base ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #0f0f0f;
+            color: #e8e8e8;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* ===== Navbar ===== */
+        .nav {
+            position: sticky; top: 0; z-index: 1000;
+            background: #181818;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+            height: 75px; display: flex; align-items: center;
+            justify-content: space-between; gap: 20px;
+        }
+
+        .logo-link { display: flex; align-items: center; gap: 10px; }
+        .logo-img { width: 42px; height: 42px; object-fit: contain; border-radius: 8px; background: #2a2a2a; }
+        .logo-text { font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+
+        .nav-links { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+        .nav-links li a {
+            display: flex; align-items: center; gap: 6px;
+            padding: 10px 14px; border-radius: 8px;
+            color: #b8b8b8; font-size: 0.92rem; font-weight: 500;
+            transition: background 0.2s, color 0.2s; white-space: nowrap;
+        }
+        .nav-links li a:hover { background: #2a2a2a; color: #fff; }
+        .nav-links li a i { font-size: 0.9rem; }
+
+        .nav-right { display: flex; align-items: center; gap: 14px; }
+
+        .cart-icon {
+            position: relative; display: flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: #2a2a2a; color: #e8e8e8; transition: background 0.2s;
+            cursor: pointer; border: none; font-size: 1rem;
+        }
+        .cart-icon:hover { background: #3a3a3a; }
+        .cart-icon #cart-count {
+            position: absolute; top: -4px; right: -4px;
+            background: #e63946; color: #fff; font-size: 0.7rem; font-weight: 700;
+            min-width: 18px; height: 18px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; padding: 0 4px;
+        }
+
+        .auth-links { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .login-btn {
+            padding: 9px 20px; background: #e63946; color: #fff;
+            border-radius: 8px; font-weight: 500; transition: background 0.2s;
+        }
+        .login-btn:hover { background: #c92f3b; }
+        .user-name { color: #b8b8b8; font-weight: 500; }
+        .profile-link, .logout-link {
+            color: #b8b8b8; font-weight: 500; padding: 6px 10px;
+            border-radius: 6px; transition: background 0.2s;
+        }
+        .profile-link:hover, .logout-link:hover { background: #2a2a2a; color: #fff; }
+        .logout-link { color: #e63946; }
+
+        .nav-toggle {
+            display: none; background: none; border: none;
+            font-size: 1.4rem; color: #e8e8e8; cursor: pointer; padding: 8px;
+        }
+
+        /* ===== Sections ===== */
+        .section { padding: 60px 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        .section-title {
+            text-align: center; font-size: 2rem; font-weight: 700;
+            margin-bottom: 40px; color: #fff;
+        }
+
+        .category-title {
+            font-size: 1.5rem; font-weight: 700; color: #fff;
+            margin-bottom: 24px; padding-bottom: 12px;
+            border-bottom: 2px solid #e63946; display: inline-block;
+        }
+        .category-title i { margin-right: 10px; color: #e63946; }
+        .category-section { margin-bottom: 60px; scroll-margin-top: 90px; display: none; }
+        .category-section.has-products { display: block; }
+        .category-section:last-child { margin-bottom: 0; }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .project-card {
+            background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 14px;
+            overflow: hidden; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            border-color: #3a3a3a;
+        }
+
+        .project-thumbnail img {
+            width: 100%; height: 220px; object-fit: contain;
+            background: #141414; padding: 20px;
+        }
+
+        .project-content { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+        .project-label { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .project-description { color: #9a9a9a; font-size: 0.9rem; }
+
+        .project-link {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 10px 16px; border-radius: 8px;
+            background: #e63946; color: #fff; font-size: 0.9rem; font-weight: 500;
+            border: none; cursor: pointer; transition: background 0.2s;
+        }
+        .project-link:hover { background: #c92f3b; }
+
+        .add-to-cart { background: #2a2a2a; color: #e8e8e8; border: 1px solid #3a3a3a; }
+        .add-to-cart:hover { background: #3a3a3a; color: #fff; }
+
+        /* ===== Discount Section ===== */
+        .discount {
+            background: linear-gradient(135deg, #181818, #1c1c1c);
+            border-top: 1px solid #2a2a2a; border-bottom: 1px solid #2a2a2a;
+            color: #e8e8e8; padding: 60px 20px; text-align: center;
+            scroll-margin-top: 90px;
+        }
+        .discount-content { max-width: 600px; margin: 0 auto; }
+        .discount-title { font-size: 2rem; margin-bottom: 14px; color: #fff; }
+        .discount-description { font-size: 1rem; margin-bottom: 10px; opacity: 0.9; }
+        .discount-description strong { color: #ffd166; font-size: 1.1rem; }
+        .discount-subtitle { font-size: 0.9rem; opacity: 0.75; margin-bottom: 22px; }
+        .discount-icon { font-size: 2.4rem; margin-bottom: 12px; color: #ffd166; }
+        .discount-text { font-size: 0.92rem; opacity: 0.85; margin-bottom: 20px; }
+        .discount-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .discount-input {
+            flex: 1; min-width: 240px; padding: 12px 16px;
+            border: 1px solid #3a3a3a; border-radius: 8px; font-size: 0.95rem;
+            font-family: inherit; background: #141414; color: #e8e8e8; outline: none;
+        }
+        .discount-input:focus { border-color: #e63946; }
+        .discount-input::placeholder { color: #6a6a6a; }
+        .btn-discount {
+            padding: 12px 24px; border: none; border-radius: 8px;
+            background: #ffd166; color: #111; font-weight: 700; font-size: 0.95rem;
+            cursor: pointer; font-family: inherit; transition: background 0.2s;
+        }
+        .btn-discount:hover { background: #f5c14e; }
+
+        /* ===== Footer ===== */
+        .footer {
+            background: #080808; color: #9a9a9a; padding: 40px 20px;
+            border-top: 1px solid #2a2a2a; scroll-margin-top: 90px;
+        }
+        .footer-container {
+            max-width: 1200px; margin: 0 auto; display: flex;
+            flex-direction: column; align-items: center; gap: 18px; text-align: center;
+        }
+        .footer-logo a { font-size: 1.4rem; font-weight: 700; color: #fff; }
+        .footer-social { display: flex; gap: 16px; }
+        .footer-social a {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: #1c1c1c; border: 1px solid #2a2a2a;
+            display: flex; align-items: center; justify-content: center;
+            color: #b8b8b8; font-size: 1.1rem;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .footer-social a:hover { background: #ffd166; color: #111; border-color: #ffd166; }
+        .footer-text { font-size: 0.85rem; color: #6a6a6a; }
+
+        /* ===== MODAL SHARED ===== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px); display: none; align-items: center;
+            justify-content: center; z-index: 2000; padding: 20px;
+            opacity: 0; transition: opacity 0.25s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal {
+            background: #1c1c1c; border: 1px solid #2a2a2a; border-radius: 16px;
+            width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            transform: translateY(20px) scale(0.97);
+            transition: transform 0.25s ease;
+        }
+        .modal-overlay.active .modal { transform: translateY(0) scale(1); }
+        .modal.wide { max-width: 620px; }
+
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 22px; border-bottom: 1px solid #2a2a2a;
+            position: sticky; top: 0; background: #1c1c1c;
+            border-radius: 16px 16px 0 0; z-index: 1;
+        }
+        .modal-header h3 {
+            font-size: 1.15rem; font-weight: 700; color: #fff;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .modal-header h3 i { color: #e63946; }
+        .modal-close {
+            background: #2a2a2a; border: none; color: #b8b8b8;
+            width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; transition: background 0.2s, color 0.2s;
+        }
+        .modal-close:hover { background: #e63946; color: #fff; }
+
+        .modal-body { padding: 22px; }
+
+        /* ===== CART MODAL ===== */
+        .cart-empty {
+            text-align: center; padding: 40px 20px; color: #6a6a6a;
+        }
+        .cart-empty i { font-size: 3rem; margin-bottom: 16px; display: block; color: #3a3a3a; }
+        .cart-empty p { font-size: 1rem; }
+
+        .cart-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 0; border-bottom: 1px solid #2a2a2a;
+        }
+        .cart-item:last-child { border-bottom: none; }
+        .cart-item-img {
+            width: 64px; height: 64px; object-fit: contain;
+            background: #141414; border: 1px solid #2a2a2a;
+            border-radius: 10px; padding: 6px; flex-shrink: 0;
+        }
+        .cart-item-info { flex: 1; min-width: 0; }
+        .cart-item-name {
+            font-size: 0.92rem; font-weight: 700; color: #fff;
+            margin-bottom: 4px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        }
+        .cart-item-price { font-size: 0.85rem; color: #e63946; font-weight: 700; }
+
+        .cart-item-qty {
+            display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+        }
+        .qty-btn {
+            width: 28px; height: 28px; border-radius: 6px;
+            background: #2a2a2a; border: 1px solid #3a3a3a;
+            color: #e8e8e8; cursor: pointer; font-size: 0.8rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .qty-btn:hover { background: #3a3a3a; }
+        .qty-value { font-size: 0.9rem; font-weight: 700; min-width: 20px; text-align: center; }
+
+        .cart-item-remove {
+            background: none; border: none; color: #e63946;
+            cursor: pointer; font-size: 0.9rem; padding: 6px;
+            border-radius: 6px; transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .cart-item-remove:hover { background: rgba(230, 57, 70, 0.15); }
+
+        .cart-footer {
+            margin-top: 18px; padding-top: 18px; border-top: 1px solid #2a2a2a;
+        }
+        .cart-total-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+        }
+        .cart-total-label { font-size: 1rem; color: #b8b8b8; font-weight: 500; }
+        .cart-total-value { font-size: 1.3rem; color: #ffd166; font-weight: 700; }
+
+        .btn-primary {
+            width: 100%; padding: 14px 20px; border: none;
+            border-radius: 10px; background: #e63946; color: #fff;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            font-family: inherit; display: flex; align-items: center;
+            justify-content: center; gap: 10px; transition: background 0.2s;
+        }
+        .btn-primary:hover { background: #c92f3b; }
+        .btn-primary:active { transform: scale(0.99); }
+        .btn-primary:disabled { background: #3a3a3a; color: #6a6a6a; cursor: not-allowed; }
+
+        .btn-whatsapp { background: #25d366; }
+        .btn-whatsapp:hover { background: #1ebe5d; }
+
+        /* ===== STEP INDICATOR ===== */
+        .steps {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; padding: 0 22px 20px; margin-bottom: 4px;
+        }
+        .step {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.8rem; color: #6a6a6a; font-weight: 500;
+        }
+        .step-num {
+            width: 26px; height: 26px; border-radius: 50%;
+            background: #2a2a2a; color: #6a6a6a; display: flex;
+            align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+        }
+        .step.active { color: #fff; }
+        .step.active .step-num { background: #e63946; color: #fff; }
+        .step.done .step-num { background: #2e7d32; color: #fff; }
+        .step.done { color: #b8b8b8; }
+        .step-line {
+            width: 40px; height: 2px; background: #2a2a2a; margin: 0 8px;
+        }
+        .step-line.done { background: #2e7d32; }
+
+        /* ===== CHECKOUT FORM ===== */
+        .checkout-form { display: flex; flex-direction: column; gap: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label {
+            font-size: 0.85rem; font-weight: 500; color: #b8b8b8;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .form-group label i { color: #e63946; font-size: 0.85rem; }
+        .form-input, .form-textarea {
+            width: 100%; padding: 12px 16px; border: 1px solid #3a3a3a;
+            border-radius: 10px; font-size: 0.95rem; font-family: inherit;
+            background: #141414; color: #e8e8e8; outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-textarea:focus { border-color: #e63946; }
+        .form-input::placeholder, .form-textarea::placeholder { color: #6a6a6a; }
+        .form-textarea { resize: vertical; min-height: 80px; }
+
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+
+        .btn-row { display: flex; gap: 12px; margin-top: 6px; }
+        .btn-row .btn-primary { flex: 1; }
+        .btn-secondary {
+            flex: 1; padding: 14px 20px; border: 1px solid #3a3a3a;
+            border-radius: 10px; background: #2a2a2a; color: #e8e8e8;
+            font-weight: 500; font-size: 1rem; cursor: pointer;
+            font-family: inherit; transition: background 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-secondary:hover { background: #3a3a3a; }
+
+        /* ===== ORDER SUMMARY IN MODAL ===== */
+        .order-summary {
+            background: #141414; border: 1px solid #2a2a2a;
+            border-radius: 12px; padding: 16px; margin-bottom: 20px;
+        }
+        .order-summary-title {
+            font-size: 0.78rem; text-transform: uppercase;
+            letter-spacing: 1px; color: #6a6a6a; font-weight: 700;
+            margin-bottom: 14px;
+        }
+        .order-summary-item {
+            display: flex; justify-content: space-between;
+            font-size: 0.88rem; color: #b8b8b8; margin-bottom: 8px;
+        }
+        .order-summary-item:last-of-type { margin-bottom: 0; }
+        .order-summary-item span:last-child { color: #e8e8e8; font-weight: 500; }
+        .order-summary-total {
+            display: flex; justify-content: space-between;
+            padding-top: 12px; margin-top: 12px;
+            border-top: 1px solid #2a2a2a;
+        }
+        .order-summary-total span:first-child {
+            font-size: 0.95rem; color: #b8b8b8; font-weight: 500;
+        }
+        .order-summary-total span:last-child {
+            font-size: 1.1rem; color: #ffd166; font-weight: 700;
+        }
+
+        /* ===== SUCCESS STATE ===== */
+        .success-state { text-align: center; padding: 30px 20px; }
+        .success-icon {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: rgba(46, 125, 50, 0.15); border: 2px solid #2e7d32;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; font-size: 2.2rem; color: #2e7d32;
+        }
+        .success-state h4 { font-size: 1.3rem; color: #fff; margin-bottom: 10px; }
+        .success-state p { font-size: 0.92rem; color: #9a9a9a; margin-bottom: 6px; }
+        .success-state .order-ref {
+            display: inline-block; margin-top: 14px; padding: 8px 16px;
+            background: #141414; border: 1px solid #2a2a2a;
+            border-radius: 8px; font-size: 0.85rem; color: #ffd166;
+            font-weight: 700;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 992px) {
+            .nav-toggle { display: block; }
+            .nav-links {
+                position: absolute; top: 75px; left: 0; right: 0;
+                background: #181818; border-bottom: 1px solid #2a2a2a;
+                flex-direction: column; align-items: stretch; gap: 0;
+                padding: 10px 16px 16px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+                transform: translateY(-150%); opacity: 0; pointer-events: none;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+            }
+            .nav-links.active { transform: translateY(0); opacity: 1; pointer-events: auto; }
+            .nav-links li a { padding: 12px 10px; width: 100%; }
+            .nav-right { margin-left: auto; }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text { font-size: 1.2rem; }
+            .logo-img { width: 36px; height: 36px; }
+            .auth-links { font-size: 0.8rem; }
+            .section-title { font-size: 1.5rem; }
+            .category-title { font-size: 1.2rem; }
+            .modal-body { padding: 18px; }
+            .modal-header { padding: 16px 18px; }
+            .steps { padding: 0 18px 16px; }
+            .step span:not(.step-num) { display: none; }
+            .step-line { width: 30px; }
+            .form-row { flex-direction: column; }
+            .cart-item { flex-wrap: wrap; }
+            .cart-item-qty { order: 3; margin-left: auto; }
+            .cart-item-remove { order: 4; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar Start -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="#projects" class="logo-link">
+                    <img src="WhatsApp Image 2026-11-17 at 8.08.56 PM.jpeg" alt="Elokala Logo" class="logo-img">
+                    <span class="logo-text">Elokala</span>
+                </a>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="#projects"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
+                <li><a href="#hoodies"><i class="fa-solid fa-shirt"></i><span>HOODIES</span></a></li>
+                <li><a href="#tshirts"><i class="fa-solid fa-tshirt"></i><span>T-SHIRTS</span></a></li>
+                <li><a href="#jackets"><i class="fa-solid fa-vest"></i><span>JACKETS</span></a></li>
+                <li><a href="#offer"><i class="fa-solid fa-dollar-sign"></i><span>GET offer</span></a></li>
+                <li><a href="#contact"><i class="fa-solid fa-phone"></i><span>Contact</span></a></li>
+            </ul>
+
+            <div class="nav-right">
+                <button class="cart-icon" id="cartBtn" aria-label="Open cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cart-count">0</span>
+                </button>
+
+                <div id="guestLinks" class="auth-links">
+                    <a href="/links/login/" class="login-btn">Login</a>
+                </div>
+            </div>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Shop Collection -->
+    <section id="projects" class="section projects-section">
+        <div class="container">
+            <h1 class="section-title">SHOP collection</h1>
+
+            <!-- ===== HOODIES ===== -->
+            <div id="hoodies" class="category-section">
+                <h2 class="category-title"><i class="fa-solid fa-shirt"></i> Hoodies</h2>
+                <div class="projects-grid">
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="Hoodie - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="Hoodie - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="Hoodie - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="Hoodie - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="Hoodie - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="Hoodie - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <!-- ===== T-SHIRTS ===== -->
+            <div id="tshirts" class="category-section">
+                <h2 class="category-title"><i class="fa-solid fa-tshirt"></i> T-Shirts</h2>
+                <div class="projects-grid">
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="T-Shirt - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="T-Shirt - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="T-Shirt - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="T-Shirt - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="T-Shirt - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="T-Shirt - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <!-- ===== JACKETS ===== -->
+            <div id="jackets" class="category-section">
+                <h2 class="category-title"><i class="fa-solid fa-vest"></i> Jackets</h2>
+                <div class="projects-grid">
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="Jacket - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="Jacket - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="Jacket - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="Jacket - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                    <article class="project-card">
+                        <div class="project-thumbnail">
+                            <img alt="SOON" src="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png" />
+                        </div>
+                        <div class="project-content">
+                            <h3 class="project-label">SOON🔥</h3>
+                            <p class="project-description">Price | 00 EG</p>
+                            <button class="project-link buy-now" data-name="Jacket - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                BUY NOW <i class="fas fa-dollar-sign"></i>
+                            </button>
+                            <button class="project-link add-to-cart" data-name="Jacket - SOON🔥" data-price="0" data-image="https://www.kindpng.com/picc/m/44-448507_clothes-hanger-clip-art-hd-png-download.png">
+                                Add To Cart <i class="fas fa-shopping-cart"></i>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Discount Section -->
+    <section id="offer" class="discount">
+        <div class="discount-content">
+            <h2 class="discount-title">Limited Time Offer!</h2>
+            <p class="discount-description">Get 10% off on your first purchase. Use code <strong>ELOKALA20</strong> at checkout.</p>
+            <p class="discount-subtitle">Subscribe to our newsletter for exclusive deals and updates.</p>
+            <i class="fa-solid fa-envelope discount-icon"></i>
+            <p class="discount-text">Enter your email address to receive a discount code for up to 50% off.</p>
+            <form class="discount-form">
+                <input type="email" class="discount-input" placeholder="Enter your email address" required>
+                <button type="submit" class="btn-discount">Get Discount</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+        <div class="footer-container">
+            <div class="footer-logo"><a href="#projects">Elokala</a></div>
+            <div class="footer-social">
+                <a href="https://www.facebook.com/share/1MMzzwrnLF/" target="_blank" rel="noopener noreferrer" aria-label="facebook"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://wa.me/201069771131" target="_blank" rel="noopener noreferrer" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/elokala_onlain?obrf=MTh1amczY2Z1b2Zuaw==" target="_blank" rel="noopener noreferrer" aria-label="instagram"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+            <p class="footer-text">&copy; 2024 Elokala. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== CART MODAL ===== -->
+    <div class="modal-overlay" id="cartOverlay">
+        <div class="modal wide" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-cart-shopping"></i> Your Cart</h3>
+                <button class="modal-close" id="cartClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="cartItemsContainer"></div>
+                <div class="cart-footer" id="cartFooter" style="display:none;">
+                    <div class="cart-total-row">
+                        <span class="cart-total-label">Total</span>
+                        <span class="cart-total-value" id="cartTotal">0 EG</span>
+                    </div>
+                    <button class="btn-primary" id="checkoutBtn">
+                        Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CHECKOUT MODAL (Step 2) ===== -->
+    <div class="modal-overlay" id="checkoutOverlay">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-location-dot"></i> Delivery Details</h3>
+                <button class="modal-close" id="checkoutClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="steps">
+                <div class="step done"><span class="step-num"><i class="fa-solid fa-check"></i></span><span>Cart</span></div>
+                <div class="step-line done"></div>
+                <div class="step active"><span class="step-num">2</span><span>Details</span></div>
+                <div class="step-line"></div>
+                <div class="step"><span class="step-num">3</span><span>Confirm</span></div>
+            </div>
+
+            <div class="modal-body">
+                <form class="checkout-form" id="detailsForm">
+                    <div class="form-group">
+                        <label for="phoneInput"><i class="fa-solid fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="phoneInput" class="form-input" placeholder="01xxxxxxxxx" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailInput"><i class="fa-solid fa-envelope"></i> Email</label>
+                        <input type="email" id="emailInput" class="form-input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="addressInput"><i class="fa-solid fa-location-dot"></i> Address</label>
+                        <textarea id="addressInput" class="form-textarea" placeholder="Street, building, city..." required></textarea>
+                    </div>
+                    <div class="btn-row">
+                        <button type="button" class="btn-secondary" id="backToCart">
+                            <i class="fa-solid fa-arrow-left"></i> Back
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            Continue <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONFIRM MODAL (Step 3) ===== -->
+    <div class="modal-overlay" id="confirmOverlay">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-receipt"></i> Confirm Order</h3>
+                <button class="modal-close" id="confirmClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="steps">
+                <div class="step done"><span class="step-num"><i class="fa-solid fa-check"></i></span><span>Cart</span></div>
+                <div class="step-line done"></div>
+                <div class="step done"><span class="step-num"><i class="fa-solid fa-check"></i></span><span>Details</span></div>
+                <div class="step-line done"></div>
+                <div class="step active"><span class="step-num">3</span><span>Confirm</span></div>
+            </div>
+
+            <div class="modal-body">
+                <div class="order-summary">
+                    <div class="order-summary-title">Order Summary</div>
+                    <div id="confirmItems"></div>
+                    <div class="order-summary-total">
+                        <span>Total</span>
+                        <span id="confirmTotal">0 EG</span>
+                    </div>
+                </div>
+
+                <div class="order-summary">
+                    <div class="order-summary-title">Delivery Info</div>
+                    <div class="order-summary-item">
+                        <span>Phone</span>
+                        <span id="confirmPhone">—</span>
+                    </div>
+                    <div class="order-summary-item">
+                        <span>Email</span>
+                        <span id="confirmEmail" style="text-align:right; max-width:60%;">—</span>
+                    </div>
+                    <div class="order-summary-item">
+                        <span>Address</span>
+                        <span id="confirmAddress" style="text-align:right; max-width:60%;">—</span>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button type="button" class="btn-secondary" id="backToDetails">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    <button type="button" class="btn-primary btn-whatsapp" id="placeOrderBtn">
+                        <i class="fa-brands fa-whatsapp"></i> Place Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SUCCESS MODAL ===== -->
+    <div class="modal-overlay" id="successOverlay">
+        <div class="modal" role="dialog" aria-modal="true">
+            <div class="modal-body">
+                <div class="success-state">
+                    <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+                    <h4>Order Sent!</h4>
+                    <p>Your order details have been sent to WhatsApp.</p>
+                    <p>We'll contact you soon to confirm delivery.</p>
+                    <div class="order-ref" id="orderRef">Order #0000</div>
+                </div>
+                <button class="btn-primary" id="successClose" style="margin-top:20px;">
+                    Continue Shopping <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./script.js"></script>
+</body>
+
+</html>

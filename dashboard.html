@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Elokala | Dashboard</title>
+    <style>
+        /* ===== Reset & Base ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --bg-2: #0f0f0f;
+            --card: #161616;
+            --card-2: #1c1c1c;
+            --border: #262626;
+            --border-2: #333;
+            --text: #f0f0f0;
+            --text-dim: #a0a0a0;
+            --text-mute: #666;
+            --red: #e63946;
+            --red-dark: #c92f3b;
+            --green: #2ecc71;
+            --yellow: #ffd166;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+        input, select { font-family: inherit; }
+
+        /* ===== LOGIN SCREEN ===== */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at top, #1a1a1a 0%, #0a0a0a 60%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 5000;
+            opacity: 1;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .login-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 42px 38px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--red), var(--yellow), var(--red));
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 0% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .login-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .login-logo-img {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            background: var(--card-2);
+            object-fit: contain;
+        }
+        .login-logo-text {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .login-subtitle {
+            text-align: center;
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            margin-bottom: 30px;
+        }
+
+        .login-form { display: flex; flex-direction: column; gap: 18px; }
+
+        .login-field { display: flex; flex-direction: column; gap: 8px; }
+        .login-field label {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .login-field label i { color: var(--red); font-size: 0.8rem; }
+
+        .login-input {
+            width: 100%;
+            padding: 13px 16px;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .login-input:focus {
+            border-color: var(--red);
+            background: #141414;
+        }
+        .login-input::placeholder { color: var(--text-mute); }
+
+        .login-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+        }
+        .login-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dim);
+            cursor: pointer;
+            user-select: none;
+        }
+        .login-check input {
+            accent-color: var(--red);
+            width: 15px; height: 15px;
+            cursor: pointer;
+        }
+        .login-forgot { color: var(--red); font-weight: 500; }
+        .login-forgot:hover { text-decoration: underline; }
+
+        .login-error {
+            background: rgba(230, 57, 70, 0.12);
+            border: 1px solid rgba(230, 57, 70, 0.4);
+            color: #ff8a95;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.82rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .login-error.show { display: flex; }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--red);
+            color: #fff;
+            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.98rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .login-btn:hover { background: var(--red-dark); }
+        .login-btn:active { transform: scale(0.99); }
+        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .login-hint {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-mute);
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+        }
+        .login-hint strong { color: var(--yellow); }
+
+        /* ===== DASHBOARD LAYOUT ===== */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+        .dashboard.show { display: flex; }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 22px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-logo {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: var(--card-2);
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: 900;
+            letter-spacing: 0.3px;
+        }
+        .sidebar-brand span {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-mute);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+        .sidebar-section-title {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-mute);
+            font-weight: 700;
+            padding: 14px 12px 8px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 3px;
+            transition: background 0.2s, color 0.2s;
+            position: relative;
+        }
+        .sidebar-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .sidebar-link:hover {
+            background: var(--card-2);
+            color: var(--text);
+        }
+        .sidebar-link.active {
+            background: rgba(230, 57, 70, 0.12);
+            color: var(--red);
+            font-weight: 700;
+        }
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background: var(--red);
+            border-radius: 0 3px 3px 0;
+        }
+        .sidebar-badge {
+            margin-left: auto;
+            background: var(--red);
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-2);
+            margin-bottom: 8px;
+        }
+        .sidebar-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--red), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .sidebar-user-info { min-width: 0; }
+        .sidebar-user-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sidebar-user-email {
+            font-size: 0.72rem;
+            color: var(--text-mute);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-logout {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .sidebar-logout:hover {
+            background: rgba(230, 57, 70, 0.1);
+            color: var(--red);
+            border-color: rgba(230, 57, 70, 0.4);
+        }
+
+        /* ===== MAIN AREA ===== */
+        .main {
+            flex: 1;
+            margin-left: 260px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 28px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 40px; height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--card-2);
+            color: var(--text);
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .topbar-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .topbar-title span {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-mute);
+            margin-top: 2px;
+        }
+
+        .topbar-search {
+            flex: 1;
+            max-width: 380px;
+            position: relative;
+        }
+        .topbar-search i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-mute);
+            font-size: 0.85rem;
+        }
+        .topbar-search input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .topbar-search input:focus { border-color: var(--red); }
+        .topbar-search input::placeholder { color: var(--text-mute); }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .topbar-icon-btn {
+            width: 40px; height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--card-2);
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            position: relative;
+            transition: background 0.2s, color 0.2s;
+        }
+        .topbar-icon-btn:hover { background: var(--border); color: var(--text); }
+        .topbar-icon-btn .dot {
+            position: absolute;
+            top: 9px; right: 9px;
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--red);
+            border: 2px solid var(--card-2);
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 12px 5px 5px;
+            border-radius: 30px;
+            background: var(--card-2);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .topbar-user:hover { background: var(--border); }
+        .topbar-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--red), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: #fff;
+        }
+        .topbar-user-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        /* ===== CONTENT ===== */
+        .content {
+            padding: 28px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+        .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+        .page-header p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-2);
+            box-shadow: var(--shadow);
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            opacity: 0.08;
+            transform: translate(30%, -30%);
+        }
+        .stat-card.red::after { background: var(--red); }
+        .stat-card.green::after { background: var(--green); }
+        .stat-card.yellow::after { background: var(--yellow); }
+        .stat-card.blue::after { background: var(--blue); }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .stat-icon {
+            width: 44px; height: 44px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .stat-card.red .stat-icon { background: rgba(230, 57, 70, 0.15); color: var(--red); }
+        .stat-card.green .stat-icon { background: rgba(46, 204, 113, 0.15); color: var(--green); }
+        .stat-card.yellow .stat-icon { background: rgba(255, 209, 102, 0.15); color: var(--yellow); }
+        .stat-card.blue .stat-icon { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+
+        .stat-trend {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stat-trend.up { background: rgba(46, 204, 113, 0.12); color: var(--green); }
+        .stat-trend.down { background: rgba(230, 57, 70, 0.12); color: var(--red); }
+
+        .stat-value {
+            font-size: 1.9rem;
+            font-weight: 900;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+        .stat-label {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+        }
+
+        /* ===== PANELS ===== */
+        .panels-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 22px;
+            margin-bottom: 28px;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .panel-title {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        .panel-title i { color: var(--red); font-size: 0.9rem; }
+        .panel-action {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .panel-action:hover { color: var(--red); }
+
+        .panel-body { padding: 8px 0; flex: 1; }
+
+        /* ===== ORDERS TABLE ===== */
+        .table-wrap { overflow-x: auto; }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .orders-table th {
+            text-align: left;
+            padding: 12px 20px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-mute);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .orders-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .orders-table tbody tr:last-child td { border-bottom: none; }
+        .orders-table tbody tr { transition: background 0.15s; }
+        .orders-table tbody tr:hover { background: var(--card-2); }
+
+        .order-id { font-weight: 700; color: var(--text); font-family: 'Courier New', monospace; font-size: 0.82rem; }
+        .order-product { color: var(--text-dim); }
+        .order-total { font-weight: 700; color: var(--yellow); }
+        .order-date { color: var(--text-mute); font-size: 0.8rem; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        .status-pending { background: rgba(255, 209, 102, 0.12); color: var(--yellow); }
+        .status-shipped { background: rgba(59, 130, 246, 0.12); color: var(--blue); }
+        .status-delivered { background: rgba(46, 204, 113, 0.12); color: var(--green); }
+        .status-cancelled { background: rgba(230, 57, 70, 0.12); color: var(--red); }
+
+        /* ===== ACTIVITY FEED ===== */
+        .activity-list { padding: 12px 20px; }
+        .activity-item {
+            display: flex;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-dot {
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .activity-dot.green { background: rgba(46, 204, 113, 0.15); color: var(--green); }
+        .activity-dot.blue { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+        .activity-dot.yellow { background: rgba(255, 209, 102, 0.15); color: var(--yellow); }
+        .activity-dot.red { background: rgba(230, 57, 70, 0.15); color: var(--red); }
+
+        .activity-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .activity-text strong { font-weight: 700; }
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-mute);
+            margin-top: 3px;
+        }
+
+        /* ===== PRODUCTS GRID ===== */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 18px;
+            padding: 20px;
+        }
+        .product-mini {
+            background: var(--card-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .product-mini:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-2);
+        }
+        .product-mini-img {
+            width: 100%;
+            height: 130px;
+            object-fit: contain;
+            background: var(--bg-2);
+            padding: 14px;
+        }
+        .product-mini-body { padding: 12px; }
+        .product-mini-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .product-mini-cat {
+            font-size: 0.72rem;
+            color: var(--text-mute);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .product-mini-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .product-mini-price { font-size: 0.9rem; font-weight: 700; color: var(--yellow); }
+        .product-mini-stock {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+        .stock-in { background: rgba(46, 204, 113, 0.12); color: var(--green); }
+        .stock-low { background: rgba(255, 209, 102, 0.12); color: var(--yellow); }
+        .stock-out { background: rgba(230, 57, 70, 0.12); color: var(--red); }
+        .product-mini-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .product-action-btn { width: 30px; height: 30px; border-radius: 8px; background: var(--bg-2); border: 1px solid var(--border); color: var(--text-dim); font-size: 0.78rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+        .product-action-btn:hover { background: var(--border); color: var(--text); }
+        .product-action-btn.danger:hover { background: rgba(230, 57, 70, 0.15); color: var(--red); border-color: rgba(230, 57, 70, 0.4); }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-mute);
+        }
+        .empty-state i {
+            font-size: 2.6rem;
+            margin-bottom: 14px;
+            display: block;
+            color: var(--border-2);
+        }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1100px) {
+            .panels-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 20px 0 60px rgba(0, 0, 0, 0.6);
+            }
+            .main { margin-left: 0; }
+            .menu-toggle { display: flex; }
+            .topbar-search { display: none; }
+            .topbar-user-name { display: block; }
+        }
+
+        @media (max-width: 600px) {
+            .content { padding: 18px; }
+            .topbar { padding: 0 18px; }
+            .topbar-title { font-size: 1rem; }
+            .page-header h1 { font-size: 1.3rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stat-card { padding: 16px; }
+            .stat-value { font-size: 1.4rem; }
+            .stat-icon { width: 38px; height: 38px; font-size: 0.95rem; }
+            .stat-label { font-size: 0.75rem; }
+            .login-card { padding: 32px 24px; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 14px; }
+            .product-mini-img { height: 100px; }
+            .topbar-user { padding: 4px; }
+            .topbar-user-name { display: none; }
+        }
+
+        @media (max-width: 380px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="WhatsApp Image 2026-11-17 at 8.08.56 PM.jpeg" alt="Elokala" class="login-logo-img">
+                <span class="login-logo-text">Elokala</span>
+            </div>
+            <h1 class="login-title">Welcome Back</h1>
+            <p class="login-subtitle">Sign in to access your dashboard</p>
+
+            <form class="login-form" id="loginForm">
+                <div class="login-error" id="loginError">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span id="loginErrorText">Invalid email or password</span>
+                </div>
+
+                <div class="login-field">
+                    <label for="loginEmail"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                    <input type="email" id="loginEmail" class="login-input" placeholder="you@example.com" required autocomplete="email">
+                </div>
+
+                <div class="login-field">
+                    <label for="loginPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="loginPassword" class="login-input" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+
+                <div class="login-row">
+                    <label class="login-check">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="login-forgot">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+                </button>
+            </form>
+
+            <p class="login-hint">
+                Sign in with your authorized Firebase account.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="dashboard" id="dashboard">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="WhatsApp Image 2026-11-17 at 8.08.56 PM.jpeg" alt="Elokala" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    Elokala
+                    <span>Admin Panel</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-title">Main</div>
+                <a href="#" class="sidebar-link active" data-section="overview">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="sidebar-link" data-section="orders">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>Orders</span>
+                    <span class="sidebar-badge" id="ordersBadge">0</span>
+                </a>
+                <a href="#" class="sidebar-link" data-section="products">
+                    <i class="fa-solid fa-shirt"></i>
+                    <span>Products</span>
+                </a>
+                <a href="#" class="sidebar-link" data-section="customers">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Customers</span>
+                </a>
+
+                <div class="sidebar-section-title">System</div>
+                <a href="#" class="sidebar-link" data-section="settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="/" class="sidebar-link">
+                    <i class="fa-solid fa-store"></i>
+                    <span>Back to Shop</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="sidebarUserName">Admin</div>
+                        <div class="sidebar-user-email" id="sidebarUserEmail"></div>
+                    </div>
+                </div>
+                <button class="sidebar-logout" id="logoutBtn">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="main">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="topbar-title">
+                        <span id="topbarSection">Overview</span>
+                        Dashboard
+                    </div>
+                    <div class="topbar-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="globalSearch" placeholder="Search orders, products...">
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <button class="topbar-icon-btn" aria-label="Notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="dot"></span>
+                    </button>
+                    <button class="topbar-icon-btn" aria-label="Messages">
+                        <i class="fa-solid fa-envelope"></i>
+                    </button>
+                    <div class="topbar-user" id="topbarUser">
+                        <div class="topbar-avatar" id="topbarAvatar">A</div>
+                        <span class="topbar-user-name" id="topbarUserName">Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTENT -->
+            <main class="content">
+
+                <!-- OVERVIEW SECTION -->
+                <section id="section-overview">
+                    <div class="page-header">
+                        <h1>Dashboard Overview</h1>
+                        <p>Welcome back! Here's what's happening with your store today.</p>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card red">
+                            <div class="stat-top">
+                                <div class="stat-icon"><i class="fa-solid fa-receipt"></i></div>
+                                <div class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> 12%</div>
+                            </div>
+                            <div class="stat-value" id="statOrders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+
+                        <div class="stat-card green">
+                            <div class="stat-top">
+                                <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+                                <div class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> 8%</div>
+                            </div>
+                            <div class="stat-value" id="statRevenue">0 EG</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+
+                        <div class="stat-card yellow">
+                            <div class="stat-top">
+                                <div class="stat-icon"><i class="fa-solid fa-shirt"></i></div>
+                                <div class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> 3%</div>
+                            </div>
+                            <div class="stat-value" id="statProducts">0</div>
+                            <div class="stat-label">Products</div>
+                        </div>
+
+                        <div class="stat-card blue">
+                            <div class="stat-top">
+                                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                                <div class="stat-trend down"><i class="fa-solid fa-arrow-down"></i> 2%</div>
+                            </div>
+                            <div class="stat-value" id="statCustomers">0</div>
+                            <div class="stat-label">Customers</div>
+                        </div>
+                    </div>
+
+                    <!-- Panels -->
+                    <div class="panels-grid">
+                        <!-- Recent Orders -->
+                        <div class="panel">
+                            <div class="panel-header">
+                                <div class="panel-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Orders</div>
+                                <a href="#" class="panel-action" data-goto="orders">View all <i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                            <div class="panel-body">
+                                <div class="table-wrap">
+                                    <table class="orders-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Order ID</th>
+                                                <th>Product</th>
+                                                <th>Total</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentOrdersBody">
+                                            <!-- populated by JS -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity Feed -->
+                        <div class="panel">
+                            <div class="panel-header">
+                                <div class="panel-title"><i class="fa-solid fa-bolt"></i> Recent Activity</div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="activity-list">
+                                    <div class="activity-item">
+                                        <div class="activity-dot green"><i class="fa-solid fa-check"></i></div>
+                                        <div class="activity-text">
+                                            <strong>New order placed</strong> by Ahmed Mohamed
+                                            <div class="activity-time">2 minutes ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-dot blue"><i class="fa-solid fa-truck"></i></div>
+                                        <div class="activity-text">
+                                            <strong>Order #ELK-4821</strong> was shipped
+                                            <div class="activity-time">18 minutes ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-dot yellow"><i class="fa-solid fa-star"></i></div>
+                                        <div class="activity-text">
+                                            <strong>New 5-star review</strong> on Hoodie product
+                                            <div class="activity-time">1 hour ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-dot red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                        <div class="activity-text">
+                                            <strong>Low stock alert</strong> on T-Shirt (3 left)
+                                            <div class="activity-time">3 hours ago</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-box"></i> Products</div>
+                            <a href="#" class="panel-action" data-goto="products">Manage <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+                        <div class="products-grid" id="overviewProducts"></div>
+                    </div>
+                </section>
+
+                <!-- ORDERS SECTION -->
+                <section id="section-orders" style="display:none;">
+                    <div class="page-header">
+                        <h1>All Orders</h1>
+                        <p>View and manage customer orders.</p>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-receipt"></i> Orders List</div>
+                            <select id="orderFilter" style="background:var(--bg-2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:0.82rem;outline:none;">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-wrap">
+                                <table class="orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Product</th>
+                                            <th>Customer</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="allOrdersBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PRODUCTS SECTION -->
+                <section id="section-products" style="display:none;">
+                    <div class="page-header">
+                        <h1>Products</h1>
+                        <p>Manage your store's product catalog.</p>
+                    </div>
+                    <div class="panel" style="margin-bottom:18px;">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-plus"></i> <span id="productFormTitle">Add New Product</span></div>
+                        </div>
+                        <div class="panel-body" style="padding:18px 20px;">
+                            <form id="productForm" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;align-items:end;">
+                                <input type="hidden" id="productId">
+                                <div class="login-field"><label>Name</label><input type="text" id="productName" class="login-input" required placeholder="Classic Hoodie"></div>
+                                <div class="login-field"><label>Category</label>
+                                    <select id="productCategory" class="login-input">
+                                        <option>Hoodies</option><option>T-Shirts</option><option>Jackets</option>
+                                    </select>
+                                </div>
+                                <div class="login-field"><label>Price (EG)</label><input type="number" id="productPrice" class="login-input" min="0" step="1" required placeholder="450"></div>
+                                <div class="login-field"><label>Stock</label><input type="number" id="productStock" class="login-input" min="0" step="1" value="0"></div>
+                                <div class="login-field"><label>Image URL</label><input type="url" id="productImageUrl" class="login-input" placeholder="https://..."></div>
+                                <div class="login-field"><label>Or upload image</label><input type="file" id="productImageFile" class="login-input" accept="image/*"></div>
+                                <div style="display:flex;gap:10px;">
+                                    <button type="submit" class="login-btn" id="productSubmitBtn" style="padding:12px;"><i class="fa-solid fa-check"></i> Save</button>
+                                    <button type="button" class="login-btn" id="productCancelBtn" style="padding:12px;background:var(--card-2);display:none;"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </form>
+                            <div id="productFormPreview" style="margin-top:12px;display:none;"><img id="productPreviewImg" style="max-height:120px;border-radius:10px;border:1px solid var(--border);" alt="preview"></div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-shirt"></i> All Products</div>
+                        </div>
+                        <div class="products-grid" id="allProducts"></div>
+                    </div>
+                </section>
+
+                <!-- CUSTOMERS SECTION -->
+                <section id="section-customers" style="display:none;">
+                    <div class="page-header">
+                        <h1>Customers</h1>
+                        <p>Your customer base at a glance.</p>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-users"></i> Customer List</div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-wrap">
+                                <table class="orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Orders</th>
+                                            <th>Total Spent</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customersBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SETTINGS SECTION -->
+                <section id="section-settings" style="display:none;">
+                    <div class="page-header">
+                        <h1>Settings</h1>
+                        <p>Manage your account and store preferences.</p>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div class="panel-title"><i class="fa-solid fa-gear"></i> Account Settings</div>
+                        </div>
+                        <div class="panel-body" style="padding:22px;">
+                            <div style="display:flex;flex-direction:column;gap:16px;max-width:500px;">
+                                <div class="login-field">
+                                    <label><i class="fa-solid fa-user"></i> Display Name</label>
+                                    <input type="text" class="login-input" id="settingsName" value="Admin">
+                                </div>
+                                <div class="login-field">
+                                    <label><i class="fa-solid fa-envelope"></i> Email</label>
+                                    <input type="email" class="login-input" id="settingsEmail" value="" readonly>
+                                </div>
+                                <div class="login-field">
+                                    <label><i class="fa-solid fa-phone"></i> WhatsApp Number</label>
+                                    <input type="tel" class="login-input" value="01069771131" readonly>
+                                </div>
+                                <button class="login-btn" id="saveSettings" style="margin-top:8px;">
+                                    <i class="fa-solid fa-check"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script type="module" src="./dashboard.js"></script>
+</body>
+
+</html>
